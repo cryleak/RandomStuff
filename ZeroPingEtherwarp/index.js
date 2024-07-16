@@ -79,7 +79,7 @@ const recentlySentC06s = [] // [{pitch, yaw, x, y, z, sentAt}, ...] in the order
 const checkAllowedFails = () => {
     // Queue of teleports too long
     if (recentlySentC06s.length >= MAXQUEUEDPACKETS) return false
-    
+
     // Filter old fails
     while (recentFails.length && Date.now() - recentFails[0] > FAILWATCHPERIOD * 1000) recentFails.shift()
 
@@ -91,7 +91,7 @@ const isHoldingEtherwarpItem = () => {
     const sbId = getSkyblockItemID(held)
 
     if (sbId !== "ASPECT_OF_THE_END" && sbId !== "ASPECT_OF_THE_VOID" && sbId !== "ETHERWARP_CONDUIT") return false
-    
+
     return (held.getNBT()?.toObject()?.tag?.ExtraAttributes?.ethermerge == 1 || sbId == "ETHERWARP_CONDUIT")
 }
 
@@ -134,7 +134,7 @@ register("packetSent", (packet) => {
     const held = Player.getHeldItem()
     const item = getSkyblockItemID(held)
     const blockID = Player.lookingAt()?.getType()?.getID();
-    if (!isHoldingEtherwarpItem() || !getLastSentLook() || !Player.isSneaking() && item !== "ETHERWARP_CONDUIT" || blockID === 54 || blockID === 146) return
+    if (!isHoldingEtherwarpItem() || !getLastSentLook() || !Player.isSneaking() && item !== "ETHERWARP_CONDUIT" || blockID === 54 || blockID === 146 || blockID === 69 || blockID === 154) return
     if (!checkAllowedFails()) return ChatLib.chat(`&cZero ping etherwarp teleport aborted.\n&c${recentFails.length} fails last ${FAILWATCHPERIOD}s\n&c${recentlySentC06s.length} C06's queued currently`)
     doZeroPingEtherwarp()
 }).setFilteredClass(C08PacketPlayerBlockPlacement)
@@ -170,7 +170,7 @@ register("packetReceived", (packet, event) => {
 
     // The etherwarp was not predicted correctly
     recentFails.push(Date.now())
-    
+
     // Discard the rest of the queued teleports to check since one earlier in the chain failed
     while (recentlySentC06s.length) recentlySentC06s.shift()
 
